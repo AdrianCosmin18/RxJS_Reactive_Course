@@ -1,5 +1,6 @@
 <h2>Bands</h2>
-<div class="row">
+<!--inainte ca datele sa fie incarate => verifica daca exista-->
+<div class="row" *ngIf="bandList$ | async as bandList else loading">
   <table class="table">
     <thead>
     <tr>
@@ -9,6 +10,10 @@
     </tr>
     </thead>
     <tbody>
+
+    <!--async e construit in angular => despacheteaza observable-ul => va lua valorile si formeaza un array-->
+    <!--face subscribe si automat unsubscribe-->
+<!--    <tr *ngFor="let band of bandList$ | async">-->
     <tr *ngFor="let band of bandList">
       <td>{{ band.name }}</td>
       <td>{{ band.formationYear }}</td>
@@ -17,3 +22,10 @@
     </tbody>
   </table>
 </div>
+
+<!-- cat timp "bandList$ | async" este evaluata la false => va fi afisat un reloading screen -->
+<ng-template #loading>
+  <p>Loading...</p>
+</ng-template>
+
+<pre>{{bandList$ | async | json}}</pre>
