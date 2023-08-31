@@ -1,31 +1,36 @@
 <h2>Bands</h2>
 <!--inainte ca datele sa fie incarate => verifica daca exista-->
 <div class="row" *ngIf="bandList$ | async as bandList else loading">
-  <table class="table">
-    <thead>
-    <tr>
-      <th>Name</th>
-      <th>Formation year</th>
-      <th>Is active</th>
-    </tr>
-    </thead>
-    <tbody>
+  <div class="col-sm-12">
+    <div class="form-group">
+<!--      click-ul poate fi considerat ca un reactive stream => event de button click => stream-ul e considerat observable-->
+      <button type="button" class="btn btn-primary" (click)="refreshDataClickSubject.next(null)">Refresh data</button>
+    </div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Formation year</th>
+        <th>Is active</th>
+      </tr>
+      </thead>
+      <tbody>
 
-    <!--async e construit in angular => despacheteaza observable-ul => va lua valorile si formeaza un array-->
-    <!--face subscribe si automat unsubscribe-->
-<!--    <tr *ngFor="let band of bandList$ | async">-->
-    <tr *ngFor="let band of bandList">
-      <td>{{ band.name }}</td>
-      <td>{{ band.formationYear }}</td>
-      <td>{{ band.isActive }}</td>
-    </tr>
-    </tbody>
-  </table>
+      <!--async e construit in angular => despacheteaza observable-ul => va lua valorile si formeaza un array-->
+      <!--face subscribe si automat unsubscribe-->
+      <!--    <tr *ngFor="let band of bandList$ | async">-->
+      <tr *ngFor="let band of bandList">
+        <td>{{ band.name }}</td>
+        <td>{{ band.formationYear }}</td>
+        <td>{{ band.isActive }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
 <!-- cat timp "bandList$ | async" este evaluata la false => va fi afisat un reloading screen -->
 <ng-template #loading>
   <p>Loading...</p>
 </ng-template>
-
-<pre>{{bandList$ | async | json}}</pre>
