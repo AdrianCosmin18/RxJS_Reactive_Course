@@ -2,22 +2,37 @@ import { Component } from '@angular/core';
 
 import { BandDataService } from '../band-data.service';
 import { Band } from '../model';
-import {BehaviorSubject, filter, interval, map, Observable, Subject} from "rxjs";
+import {BehaviorSubject, filter, interval, map, merge, mergeMap, Observable, startWith, Subject} from "rxjs";
 
 @Component({
   selector: 'app-band-list',
   templateUrl: 'band-list.component.html'
 })
 export class BandListComponent {
-  bandList$: Observable<Band[]>;
+  model$: Observable<{bands: Band[], isLoading: boolean}>;
 
-  //subject-ul e un observable care poate fi controlat
   refreshDataClickSubject = new Subject();
 
   constructor(private bandDataService: BandDataService) {
-    this.bandList$ = this.bandDataService.getBands();
 
     const refreshDataClick$= this.refreshDataClickSubject.asObservable();
-    refreshDataClick$.subscribe(() => console.log("click"))
+
+    const refreshTrigger$ = refreshDataClick$.pipe(
+      startWith(this.refreshDataClickSubject.next(null))
+    );
+
+    const bandList$ = refreshTrigger$.pipe(
+      mergeMap(() => this.bandDataService.getBands())
+    );
+
+    this.model$ = merge(
+      refreshTrigger$.pipe(map(() => ({bands: [], isLoading: true}) )),
+      bandList$.pipe(map(bands => ({bands: bands, isLoading: false}) ))
+    );
+
+  }
+
+  clickRefreshPage(){
+    this.refreshDataClickSubject.next(null);
   }
 }
